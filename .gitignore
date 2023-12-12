@@ -1,0 +1,38 @@
+# Arquivos gerados pelo Node.js
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# Arquivos de ambiente
+.env
+.env.local
+.env.*.local
+.env.development
+.env.test
+.env.production
+.env.local
+
+# Logs
+logs/
+*.log
+
+# Dependências locais
+.pnpm/
+.npm/
+.esm-cache/
+.env/
+
+# Arquivos de build e pacotes
+dist/
+build/
+out/
+
+# Outros arquivos e diretórios gerados durante o desenvolvimento
+.DS_Store
+Thumbs.db
+
+# Arquivos e diretórios específicos para seu ambiente de desenvolvimento
+# Você pode adicionar mais aqui, como arquivos de configuração específicos
+
+# Dependendo de suas necessidades específicas, você pode precisar ajustar o .gitignore.
+.vercel
