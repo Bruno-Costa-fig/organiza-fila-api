@@ -30,7 +30,7 @@ const balcoes: string[] = [];
 const allowedOrigins = ['http://localhost:3000', 'filaja.iguatec.com.br'];
 
 const options: cors.CorsOptions = {
-  origin: allowedOrigins
+  origin: "*"
 };
 
 app.use(cors(options));
