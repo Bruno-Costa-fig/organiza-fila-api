@@ -26,14 +26,15 @@ const port = process.env.PORT;
 
 const balcoes: string[] = [];
 
-app.use(express.json());
-app.use(cors());
+// app.use(cors());
+const allowedOrigins = ['http://localhost:3000', 'filaja.iguatec.com.br'];
 
-app.use(
-  cors({
-    origin: "*",
-  })
-);
+const options: cors.CorsOptions = {
+  origin: allowedOrigins
+};
+
+app.use(cors(options));
+app.use(express.json());
 
 function authenticateToken(req: Request, res: Response, next: NextFunction) {
   // Obtenha o token do header 'Authorization'
