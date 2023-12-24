@@ -1,5 +1,9 @@
 import { Request, Response } from 'express';
-import { DeleteOrganization, GetOrganizations, InsertOrganization, UpdateOrganization } from '../services/organization';
+import { DeleteOrganization, 
+  GetOrganizations, 
+  InsertOrganization, 
+  UpdateOrganization 
+} from '../services/organization';
 import { Organization } from '../types';
 
 const GetAllOrganization = async (req: Request, res: Response) => {

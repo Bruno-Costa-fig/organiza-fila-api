@@ -14,6 +14,7 @@ import {
 } from "./services/firebase-functions";
 
 import * as OrganizationController from "./controllers/organizationController";
+import * as UserController from "./controllers/userController";
 
 // require("dotenv").config();
 import dotenv from "dotenv";
@@ -27,7 +28,7 @@ const port = process.env.PORT;
 const balcoes: string[] = [];
 
 // app.use(cors());
-const allowedOrigins = ['http://localhost:3000', 'filaja.iguatec.com.br'];
+// const allowedOrigins = ['http://localhost:3000', 'filaja.iguatec.com.br'];
 
 const options: cors.CorsOptions = {
   origin: "*"
@@ -208,6 +209,12 @@ app.get("/api/organizations", authenticateToken, OrganizationController.GetAllOr
 app.post("/api/organizations", authenticateToken, OrganizationController.PostOrganization);
 app.put("/api/organizations", authenticateToken, OrganizationController.PutOrganization);
 app.delete("/api/organizations", authenticateToken, OrganizationController.RemoveOrganization);
+
+app.get("/api/users", authenticateToken, UserController.get);
+app.get("/api/users/:id", authenticateToken, UserController.getById);
+app.post("/api/users", authenticateToken, UserController.post);
+app.put("/api/users", authenticateToken, UserController.put);
+app.delete("/api/users", authenticateToken, UserController.remove);
 
 app.post("/api/new-user", async (req: Request, res: Response) => {
   const user: NewUserDTO = {

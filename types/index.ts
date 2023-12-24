@@ -98,3 +98,4 @@ export enum LogType {
   SUCCESS = "SUCCESS",
   REMOVE_CLIENT = "REMOVE_CLIENT",
 }
+
