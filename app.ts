@@ -18,9 +18,9 @@ import * as UserController from "./controllers/userController";
 
 // require("dotenv").config();
 import dotenv from "dotenv";
+dotenv.config()
 import { Atendimento, NewUserDTO } from "./types";
 import { CreateUser, LoginUser } from "./services/auth";
-dotenv.config()
 
 const app = express();
 const port = process.env.PORT;

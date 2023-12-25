@@ -7,7 +7,6 @@ export default interface IUser {
   uid: string;
   organizationId: string;
   createdAt: Date;
-  type: string;
   numero: string;
   id: number;
   role: string;

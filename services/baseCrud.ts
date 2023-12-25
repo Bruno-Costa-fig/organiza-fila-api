@@ -8,6 +8,11 @@ async function getById<T extends Model>(model: ModelStatic<T>, id: string | numb
   return model.findByPk(id);
 }
 
+async function getWhere<T extends Model>(model: ModelStatic<T>, atrinute: string, value: string | number) {
+  // @ts-ignore
+  return model.findOne({ where: { [atrinute]: value } });
+}
+
 async function create<T extends Model>(model: ModelStatic<T>, data: Partial<T['_attributes']>) {
   // @ts-ignore
   return model.create(data);
@@ -26,6 +31,7 @@ async function remove<T extends Model>(model: ModelStatic<T>, id: string | numbe
 export {
   getAll,
   getById,
+  getWhere,
   create,
   update,
   remove,

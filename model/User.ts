@@ -15,19 +15,11 @@ const User = db.define('User', {
     type: DataTypes.STRING,
     allowNull: false
   },
-  token: {
-    type: DataTypes.STRING,
-    allowNull: false
-  },
   valid: {
     type: DataTypes.BOOLEAN,
     allowNull: false
   },
   email: {
-    type: DataTypes.STRING,
-    allowNull: false
-  },
-  uid: {
     type: DataTypes.STRING,
     allowNull: false
   },
@@ -37,10 +29,6 @@ const User = db.define('User', {
   },
   createdAt: {
     type: DataTypes.DATE,
-    allowNull: false
-  },
-  type: {
-    type: DataTypes.STRING,
     allowNull: false
   },
   numero: {

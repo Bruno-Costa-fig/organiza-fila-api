@@ -109,4 +109,23 @@ async function LoginUser(userDto: UserLoginDTO) {
   return { result, error };
 }
 
-export { CreateUser, LoginUser };
+function getUserInfo(token: string) {
+  let result: string | null = null;
+  let error: string | null = null;
+  if (!token) {
+    return null;
+  }
+
+  try {
+    // @ts-ignore
+    const decoded = jwt.verify(token, process.env.SECRET);
+    result = JSON.stringify(decoded);
+  } catch (error) {
+    // @ts-ignore
+    error = error.message;
+  }
+
+  return { result, error };
+}
+
+export { CreateUser, LoginUser, getUserInfo };

@@ -1,3 +1,4 @@
+import { getUserInfo } from "../services/auth";
 import { deleteUser, getUserById, getAllUsers, insertUser, updateUser } from "../services/userService";
 import IUser from "../types/IUser";
 import { Request, Response } from "express";
@@ -19,7 +20,16 @@ const getById = (req: Request, res: Response) => {
 };
 
 const post = (req: Request, res: Response) => {
-  insertUser(req.body as IUser).then((result) => {
+  let token = req.headers.authorization;
+
+  // @ts-ignore
+  let info = getUserInfo(token);
+  let userLogado = JSON.parse(info?.result || "{}");
+
+  let user = req.body as IUser;
+  user.organizationId = userLogado?.organizationId ?? 0;
+
+  insertUser(user).then((result) => {
     res.status(200).json(result);
   }).catch((error) => {
     res.status(400).json(error);

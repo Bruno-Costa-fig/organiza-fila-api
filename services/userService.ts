@@ -1,6 +1,7 @@
 import User from "../model/User";
 import IUser from "../types/IUser";
-import { getAll, getById, create, update, remove } from "./baseCrud";
+import { getUserInfo } from "./auth";
+import { getAll, getById, create, update, remove, getWhere } from "./baseCrud";
 
 const getAllUsers = async () => {
   let data = [] as IUser[];
@@ -39,7 +40,16 @@ const getUserById = async (id: string | number) => {
 const insertUser = async (user: IUser) => {
   let data = {} as IUser;
   let error = null;
+
   try{
+    let hasSame = await getWhere(User, 'email', user.email);
+    if(!!hasSame){
+      error = 'Já existe um usuário com esse email!';
+      return {
+        data,
+        error
+      }
+    }
     // @ts-ignore
     data = await create(User, user);
   } catch (error) {
@@ -87,9 +97,9 @@ const deleteUser = async (user: IUser) => {
   }
 }
 
-User.sync({force: true})
-  .then(() => console.log('User table created successfully'))
-  .catch(error => console.error('Error creating User table:', error));
+// User.sync({force: true})
+//   .then(() => console.log('User table created successfully'))
+//   .catch(error => console.error('Error creating User table:', error));
 
   export {
     getAllUsers,
