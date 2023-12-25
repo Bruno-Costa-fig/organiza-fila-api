@@ -3,8 +3,10 @@ import { DeleteOrganization,
   GetOrganizations, 
   InsertOrganization, 
   UpdateOrganization 
-} from '../services/organization';
-import { Organization } from '../types';
+} from '../services/organizationService';
+import { IOrganization } from '../types';
+import { v4 as uuidv4 } from 'uuid';
+
 
 const GetAllOrganization = async (req: Request, res: Response) => {
   try {
@@ -20,10 +22,11 @@ const GetAllOrganization = async (req: Request, res: Response) => {
 };
 
 const PostOrganization = async (req: Request, res: Response) => {
-  const organization = Object.assign({} as Organization, req.body);
+  const organization = Object.assign({} as IOrganization, req.body);
   organization.createdAt = new Date();
   organization.updatedAt = new Date();
   organization.valid = true;
+  organization.uid = uuidv4();
 
   try {
     const result = await InsertOrganization(organization);
@@ -38,7 +41,7 @@ const PostOrganization = async (req: Request, res: Response) => {
 };
 
 const PutOrganization = async (req: Request, res: Response) => {
-  const organization = Object.assign({} as Organization, req.body);
+  const organization = Object.assign({} as IOrganization, req.body);
 
   try {
     const result = await UpdateOrganization(organization);
@@ -53,7 +56,7 @@ const PutOrganization = async (req: Request, res: Response) => {
 };
 
 const RemoveOrganization = async (req: Request, res: Response) => {
-  const organization = Object.assign({} as Organization, req.body);
+  const organization = Object.assign({} as IOrganization, req.body);
 
   try {
     const result = await DeleteOrganization(organization);

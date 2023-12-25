@@ -28,18 +28,6 @@ export type BalcaoToken = {
   valid: boolean;
 }
 
-export type User = {
-  username: string;
-  password: string;
-  token: string;
-  valid: boolean;
-  email: string;
-  uid: string;
-  organizationId: string; 
-  createdAt: Date;
-  balcao: string;
-}
-
 export type UserLoginDTO = {
   email: string;
   password: string;
@@ -50,14 +38,15 @@ export type NewUserDTO = {
   password: string;
   username: string;
   organizationId: string; 
-  balcao: string;
+  numero: string;
+  role: string;
 }
 
 export type TokenUser = {
   email: string;
   username: string;
   organizationId: string; 
-  balcao: string;
+  numero: string;
 }
 
 export type TokenLogin = {
@@ -65,7 +54,7 @@ export type TokenLogin = {
   user: TokenUser;
 }
 
-export type Organization = {
+export type IOrganization = {
   name: string;
   cnpj: string;
   adminEmail: string;

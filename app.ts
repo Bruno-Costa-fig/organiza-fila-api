@@ -222,7 +222,8 @@ app.post("/api/new-user", async (req: Request, res: Response) => {
     password: req.body.password,
     username: req.body.username,
     organizationId: req.body.organizationId,
-    balcao: req.body.balcao
+    numero: req.body.numero,
+    role: req.body.role,
   };
 
   try {

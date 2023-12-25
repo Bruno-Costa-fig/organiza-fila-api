@@ -1,11 +1,14 @@
-import { NewUserDTO, ParametrosGetFirts, User, UserLoginDTO, TokenUser } from "../types"
-import { base_get_first, base_insert } from "./firebase-functions";
+import { NewUserDTO, ParametrosGetFirts, UserLoginDTO, TokenUser } from "../types"
+import IUser from "../types/IUser";
+import User from "../model/User";
 // @ts-ignore
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import dotenv from "dotenv";
-import e from "express";
+import { getWhere } from "./baseCrud";
 dotenv.config()
+import {v4 as uuidv4} from 'uuid';
+import { insertUser } from "./userService";
 
 async function CreateUser(userDto: NewUserDTO) {
   let result: string | null = null;
@@ -14,37 +17,30 @@ async function CreateUser(userDto: NewUserDTO) {
     return null;
   }
 
-  
   try {
-    let salt = await bcrypt.genSalt(10);
-
     const hashedPassword = await bcrypt.hash(userDto.password, process.env.SALT);
   
-    let user: User = {
+    let user: IUser = {
       createdAt: new Date(),
       email: userDto.email,
       organizationId: userDto.organizationId,
       password: hashedPassword,
-      token: "",
       username: userDto.username,
       valid: true,
-      uid: "",
-      balcao: userDto.balcao
-    }
-    const parametros: ParametrosGetFirts = {
-      key: "email",
-      value: userDto.email,
-      comparador: "=="
+      uid: uuidv4(),
+      numero: userDto.numero,
+      role: userDto.role,
+      id: 0,
     }
 
-    const hasSame = await base_get_first<User>("users", parametros);
+    const hasSame = await getWhere(User, 'email', userDto.email);
 
-    if (!!hasSame.dados) {
+    if (!!hasSame) {
       throw new Error("Já existe um usuário com esse email!");
     }
 
-    const res = await base_insert<User>("users", user);
-    result = res;
+    const res = await insertUser(user);
+    result = JSON.stringify(res);
   }
   catch(error) {
     // @ts-ignore
@@ -62,23 +58,11 @@ async function LoginUser(userDto: UserLoginDTO) {
   }
 
   try {
-       
-    const parametros: ParametrosGetFirts = {
-      key: "email",
-      value: userDto.email,
-      comparador: "=="
-    }
-    
-    const res = await base_get_first<User>("users", parametros);
+    // @ts-ignore
+    const user: IUser = await getWhere(User, 'email', userDto.email);
 
-    if(!!res.error){
-      throw new Error(res.error);
-    }
-
-    const user = res.dados;
-
-    if (!user) {
-      throw new Error("Usuário não encontrado!");
+    if(user == null){
+      throw new Error('Usuário não encontrado!');
     }
 
     const valid = await bcrypt.compare(userDto.password, user.password);
@@ -91,7 +75,7 @@ async function LoginUser(userDto: UserLoginDTO) {
       email: user.email,
       username: user.username,
       organizationId: user.organizationId,
-      balcao: user.balcao,
+      numero: user.numero,
     }
     
     // @ts-ignore
