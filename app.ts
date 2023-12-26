@@ -20,7 +20,9 @@ import * as UserController from "./controllers/userController";
 import dotenv from "dotenv";
 dotenv.config()
 import { Atendimento, NewUserDTO } from "./types";
-import { CreateUser, LoginUser } from "./services/auth";
+import { LoginUser } from "./services/auth";
+import { insertUser } from "./services/userService";
+import IUser from "./types/IUser";
 
 const app = express();
 const port = process.env.PORT;
@@ -215,28 +217,6 @@ app.get("/api/users/:id", authenticateToken, UserController.getById);
 app.post("/api/users", authenticateToken, UserController.post);
 app.put("/api/users", authenticateToken, UserController.put);
 app.delete("/api/users", authenticateToken, UserController.remove);
-
-app.post("/api/new-user", async (req: Request, res: Response) => {
-  const user: NewUserDTO = {
-    email: req.body.email,
-    password: req.body.password,
-    username: req.body.username,
-    organizationId: req.body.organizationId,
-    numero: req.body.numero,
-    role: req.body.role,
-  };
-
-  try {
-    const result = await CreateUser(user);
-    res.status(201).json(result);
-  } catch (error: any) {
-    res.status(500).json({
-      status: "error",
-      message: error.message,
-    });
-    return;
-  }
-});
 
 app.post('/api/login', async (req: Request, res: Response) => {
   const { email, password } = req.body;

@@ -33,11 +33,19 @@ export type UserLoginDTO = {
   password: string;
 }
 
+export type UserGet = {
+  email: string;
+  username: string;
+  organizationId: number; 
+  numero: string;
+  role: string;
+}
+
 export type NewUserDTO = {
   email: string;
   password: string;
   username: string;
-  organizationId: string; 
+  organizationId: number; 
   numero: string;
   role: string;
 }
@@ -45,7 +53,7 @@ export type NewUserDTO = {
 export type TokenUser = {
   email: string;
   username: string;
-  organizationId: string; 
+  organizationId: number; 
   numero: string;
 }
 

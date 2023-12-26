@@ -4,7 +4,7 @@ export default interface IUser {
   valid: boolean;
   email: string;
   uid: string;
-  organizationId: string;
+  organizationId: number;
   createdAt: Date;
   numero: string;
   id: number;

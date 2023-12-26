@@ -1,14 +1,28 @@
 import User from "../model/User";
+import { UserGet } from "../types";
 import IUser from "../types/IUser";
 import { getUserInfo } from "./auth";
+// @ts-ignore
+import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
+import dotenv from "dotenv";
+dotenv.config();
+import { v4 as uuidv4 } from "uuid";
 import { getAll, getById, create, update, remove, getWhere } from "./baseCrud";
 
 const getAllUsers = async () => {
-  let data = [] as IUser[];
+  let data = [] as UserGet[];
   let error = null;
   try{
     const users = await getAll(User);
-    data = users.map((user: any) => user.toJSON()) as IUser[];
+    let allUsers = users.map((user: any) => user.toJSON()) as IUser[];
+    allUsers.map(x => data.push({
+      email: x.email,
+      username: x.username,
+      organizationId: x.organizationId, 
+      numero: x.numero,
+      role: x.role,
+    }))
   } catch (error) {
     console.error('Error getting all users:', error);
     error = error;
@@ -38,8 +52,12 @@ const getUserById = async (id: string | number) => {
 }
 
 const insertUser = async (user: IUser) => {
-  let data = {} as IUser;
+  let data = {} as UserGet;
   let error = null;
+
+  if (!user) {
+    return null;
+  }
 
   try{
     let hasSame = await getWhere(User, 'email', user.email);
@@ -50,8 +68,24 @@ const insertUser = async (user: IUser) => {
         error
       }
     }
+
+    const hashedPassword = await bcrypt.hash(
+      user.password,
+      process.env.SALT
+    );
+
+    user.uid = uuidv4();
+    user.password = hashedPassword;
+
     // @ts-ignore
-    data = await create(User, user);
+    let dados: IUser = await create(User, user);
+    data = {
+      email: dados.email,
+      numero: dados.numero,
+      organizationId: dados.organizationId,
+      role: dados.role,
+      username: dados.username
+    }
   } catch (error) {
     console.error('Error create user:', error);
     error = error;

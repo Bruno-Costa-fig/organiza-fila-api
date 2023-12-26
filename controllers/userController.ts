@@ -27,7 +27,7 @@ const post = (req: Request, res: Response) => {
   let userLogado = JSON.parse(info?.result || "{}");
 
   let user = req.body as IUser;
-  user.organizationId = userLogado?.organizationId ?? 0;
+  user.organizationId != 0 ? user.organizationId : userLogado?.organizationId ?? 0;
 
   insertUser(user).then((result) => {
     res.status(200).json(result);

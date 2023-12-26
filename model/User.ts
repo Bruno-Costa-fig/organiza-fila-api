@@ -1,6 +1,9 @@
 import { DataTypes } from "sequelize";
 import { sequelize as db } from "../db";
 
+/**
+ * Represents a user in the system.
+ */
 const User = db.define('User', {
   username: {
     type: DataTypes.STRING,
@@ -24,8 +27,8 @@ const User = db.define('User', {
     allowNull: false
   },
   organizationId: {
-    type: DataTypes.STRING,
-    allowNull: false
+    type: DataTypes.INTEGER,
+    allowNull: false,
   },
   createdAt: {
     type: DataTypes.DATE,
