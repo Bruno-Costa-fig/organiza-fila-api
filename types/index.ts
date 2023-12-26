@@ -55,6 +55,7 @@ export type TokenUser = {
   username: string;
   organizationId: number; 
   numero: string;
+  role: string
 }
 
 export type TokenLogin = {

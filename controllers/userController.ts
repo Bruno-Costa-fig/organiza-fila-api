@@ -4,7 +4,9 @@ import IUser from "../types/IUser";
 import { Request, Response } from "express";
 
 const get = (req: Request, res: Response) => {
-  getAllUsers().then((result) => {
+  let role = req.query.role
+  // @ts-ignore
+  getAllUsers(role).then((result) => {
     res.status(200).json(result);
   }).catch((error) => {
     res.status(400).json(error);
@@ -27,6 +29,7 @@ const post = (req: Request, res: Response) => {
   let userLogado = JSON.parse(info?.result || "{}");
 
   let user = req.body as IUser;
+  user.valid = true;
   user.organizationId != 0 ? user.organizationId : userLogado?.organizationId ?? 0;
 
   insertUser(user).then((result) => {
@@ -44,8 +47,15 @@ const put = (req: Request, res: Response) => {
   });
 };
 
-const remove = (req: Request, res: Response) => {
-  deleteUser(req.body as IUser).then((result) => {
+const remove = async (req: Request, res: Response) => {
+  let user = await getUserById(req.params.id);
+
+  if(!!user.error){
+    res.status(400).json(user.error);
+    return;
+  }
+
+  deleteUser(user.data as IUser).then((result) => {
     res.status(200).json(result);
   }).catch((error) => {
     res.status(400).json(error);

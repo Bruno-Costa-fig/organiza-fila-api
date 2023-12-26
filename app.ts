@@ -216,7 +216,7 @@ app.get("/api/users", authenticateToken, UserController.get);
 app.get("/api/users/:id", authenticateToken, UserController.getById);
 app.post("/api/users", authenticateToken, UserController.post);
 app.put("/api/users", authenticateToken, UserController.put);
-app.delete("/api/users", authenticateToken, UserController.remove);
+app.delete("/api/users/:id", authenticateToken, UserController.remove);
 
 app.post('/api/login', async (req: Request, res: Response) => {
   const { email, password } = req.body;

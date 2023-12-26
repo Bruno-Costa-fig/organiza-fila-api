@@ -36,6 +36,7 @@ async function LoginUser(userDto: UserLoginDTO) {
         username: user.username,
         organizationId: user.organizationId,
         numero: user.numero,
+        role: user.role
       };
 
       // @ts-ignore
