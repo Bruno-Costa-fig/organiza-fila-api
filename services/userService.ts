@@ -140,24 +140,29 @@ const deleteUser = async (user: IUser) => {
   };
 };
 
-function sync(){
+function sync() {
   User.sync({ force: true })
-    .then(() => {
-        console.log("User table created successfully");
-        User.create({
-            username: "Admin Iguatec",
-            password: process.env.SENHA_ADMIN,
-            valid: true,
-      email: process.env.EMAIL_ADMIN,
-      uid: uuidv4(),
-      organizationId: 1,
-      createdAt: new Date(),
-      numero: "",
-      id: 1,
-      role: "sysadmin",
-    });
-  })
-  .catch((error) => console.error("Error creating User table:", error));
+    .then(async () => {
+      console.log("User table created successfully");
+      const hashedPassword = await bcrypt.hash(
+        process.env.SENHA_ADMIN,
+        process.env.SALT
+      );
+
+      User.create({
+        username: "Admin Iguatec",
+        password: hashedPassword,
+        valid: true,
+        email: process.env.EMAIL_ADMIN,
+        uid: uuidv4(),
+        organizationId: 1,
+        createdAt: new Date(),
+        numero: "",
+        id: 1,
+        role: "sysadmin",
+      });
+    })
+    .catch((error) => console.error("Error creating User table:", error));
 }
 
 // sync();
