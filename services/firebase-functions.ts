@@ -1,5 +1,5 @@
 import * as admin from "firebase-admin";
-import { Atendimento, ParametrosGetFirts, Timestamp, NewUserDTO } from '../types/index';
+import { Atendimento, ParametrosGetFirts } from '../types/index';
 import dotenv from "dotenv";
 dotenv.config()
 

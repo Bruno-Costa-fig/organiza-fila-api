@@ -59,7 +59,13 @@ function authenticateToken(req: Request, res: Response, next: NextFunction) {
 }
 
 app.get("/api/fila", authenticateToken, async (req, res) => {
-  const result = await getFila();
+  let token = req.headers.authorization;
+
+  // @ts-ignore
+  let info = getUserInfo(token);
+  let userLogado = JSON.parse(info?.result || "{}");
+
+  const result = await getFila(userLogado.organizationId);
 
   if (!!result.dados) {
     res.send(result.dados);
@@ -68,19 +74,6 @@ app.get("/api/fila", authenticateToken, async (req, res) => {
     res.status(500);
     res.end();
   }
-});
-
-app.post("/api/novo-balcao", authenticateToken, (req, res) => {
-  let numero: string = req.body.numero;
-
-
-  if (balcoes.filter((x) => x == numero).length > 0) {
-    res.status(400).send("Já existe um balcão com esse número");
-    res.end();
-  }
-
-  balcoes.push(numero);
-  res.send(numero);
 });
 
 app.post("/api/cliente", authenticateToken, async (req, res) => {
@@ -110,8 +103,14 @@ app.post("/api/cliente", authenticateToken, async (req, res) => {
 app.get("/api/atual/:balcao", authenticateToken, async (req, res) => {
   let balcaoParams = req.params.balcao;
 
+  let token = req.headers.authorization;
+
+  // @ts-ignore
+  let info = getUserInfo(token);
+  let userLogado = JSON.parse(info?.result || "{}");
+
   try {
-    let atual = await getAtual(balcaoParams);
+    let atual = await getAtual(balcaoParams, userLogado.organizationId);
 
     res.send(atual);
     res.end();
@@ -125,8 +124,14 @@ app.get("/api/atual/:balcao", authenticateToken, async (req, res) => {
 app.get("/api/novamente/:balcao", authenticateToken, async (req, res) => {
   let balcaoParams: string = req.params.balcao;
 
+  let token = req.headers.authorization;
+
+  // @ts-ignore
+  let info = getUserInfo(token);
+  let userLogado = JSON.parse(info?.result || "{}");
+
   try {
-    let atual = await getAtual(balcaoParams);
+    let atual = await getAtual(balcaoParams, userLogado.organizationId);
     let cliente: Atendimento = atual.dados;
     if(!!cliente){
       // @ts-ignore
@@ -166,6 +171,12 @@ app.post("/api/proximo/:balcao/:uid", authenticateToken, async (req, res) => {
   let clienteRes: Atendimento | null = null;
   let error: string | null = null;
 
+  let token = req.headers.authorization;
+
+  // @ts-ignore
+  let info = getUserInfo(token);
+  let userLogado = JSON.parse(info?.result || "{}");
+
   try {
     if (uidParams != '0') {
       const cliente = req.body;
@@ -175,7 +186,7 @@ app.post("/api/proximo/:balcao/:uid", authenticateToken, async (req, res) => {
       await deleteCliente(uidParams, cliente);
     }
 
-    let getProx = await getProximo();
+    let getProx = await getProximo(userLogado.organizationId);
 
     if (getProx.error == null && !!getProx.dados) {
       let proximo: Atendimento = getProx.dados;
