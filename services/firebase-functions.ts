@@ -1,8 +1,5 @@
 import * as admin from "firebase-admin";
-// var admin = require("firebase-admin");
 import { Atendimento, ParametrosGetFirts, Timestamp, NewUserDTO } from '../types/index';
-// require("dotenv").config();
-import jwt from 'jsonwebtoken';
 import dotenv from "dotenv";
 dotenv.config()
 
@@ -29,7 +26,7 @@ function compararPorUpdatedAt(a: Atendimento, b: Atendimento) {
   return a.updatedAt._seconds > b.updatedAt._seconds;
 }
 
-async function getFila() {
+async function getFila(organizationId: number) {
   let dados: Atendimento[] = [];
   let error: string | null = null;
 
@@ -38,6 +35,7 @@ async function getFila() {
     .collection("fila")
     .where("finalizado", "==", false)
     .where("balcao", "==", "")
+    .where("organizationId", "==", organizationId)
     .limit(10)
     .get();
 
@@ -54,7 +52,7 @@ async function getFila() {
   return { dados, error };
 }
 
-async function emAtendimento() {
+async function emAtendimento(organizationId: number) {
   let dados: Atendimento[] = [];
   let error: string | null = null;
 
@@ -63,6 +61,7 @@ async function emAtendimento() {
     .collection("fila")
     .where("finalizado", "==", false)
     .where("balcao", "!=", "")
+    .where("organizationId", "==", organizationId)
     .get();
 
   if (!!result) {
@@ -78,7 +77,7 @@ async function emAtendimento() {
   return { dados, error };
 }
 
-async function getProximo() {
+async function getProximo(organizationId: number) {
   let dados = {} as Atendimento;
   let error: string | null = null;
 
@@ -87,6 +86,7 @@ async function getProximo() {
     .collection("fila")
     .where("finalizado", "==", false)
     .where("balcao", "==", "")
+    .where("organizationId", "==", organizationId)
     .get();
 
   if (!!result) {
@@ -104,7 +104,7 @@ async function getProximo() {
   return { dados, error };
 }
 
-async function getAtual(balcao: string) {
+async function getAtual(balcao: string, organizationId: number) {
   let dados: Atendimento = {} as Atendimento;
   let error: string | null = null;
 
@@ -118,6 +118,7 @@ async function getAtual(balcao: string) {
     .collection("fila")
     .where("finalizado", "==", false)
     .where("balcao", "==", balcao)
+    .where("organizationId", "==", organizationId)
     .limit(1)
     .get();
 
@@ -180,9 +181,6 @@ async function deleteCliente(uid: string, cliente: Atendimento) {
   }
 }
 
-
-
-
 // BASES
 
 async function base_insert<T>(collection: string, model: T) {
@@ -199,13 +197,14 @@ async function base_insert<T>(collection: string, model: T) {
   }
 }
 
-async function base_get_all<T>(collection: string) {
+async function base_get_all<T>(collection: string, organizationId: number) {
   let dados: T[] = [];
   let error: string | null = null;
 
   const result = await admin
     .firestore()
     .collection(collection)
+    .where("organizationId", "==", organizationId)
     .get();
 
   if (!!result) {
@@ -220,7 +219,7 @@ async function base_get_all<T>(collection: string) {
   return { dados, error };
 }
 
-async function base_get_first<T>(collection: string, parametros: ParametrosGetFirts) {
+async function base_get_first<T>(collection: string, organizationId: number, parametros: ParametrosGetFirts) {
   let dados: T | null= null;
   let error: string | null = null;
 
@@ -234,6 +233,7 @@ async function base_get_first<T>(collection: string, parametros: ParametrosGetFi
     .collection(collection)
     // @ts-ignore
     .where(parametros.key, parametros.comparador, parametros.value)
+    .where("organizationId", "==", organizationId)
     .limit(1)
     .get();
 
@@ -249,7 +249,7 @@ async function base_get_first<T>(collection: string, parametros: ParametrosGetFi
   return { dados, error };
 }
 
-async function base_update<T>(collection: string, uid: string, model: T) {
+async function base_update<T>(collection: string, organizationId: number, uid: string, model: T) {
   if (!model || !uid) {
     return null;
   }
@@ -307,7 +307,6 @@ export {
   emAtendimento,
   getProximo,
   deleteCliente,
-
 
   base_insert,
   base_get_all,

@@ -1,10 +1,8 @@
 import User from "../model/User";
 import { UserGet } from "../types";
 import IUser from "../types/IUser";
-import { getUserInfo } from "./auth";
 // @ts-ignore
 import bcrypt from "bcrypt";
-import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
 dotenv.config();
 import { v4 as uuidv4 } from "uuid";

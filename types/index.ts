@@ -5,6 +5,7 @@ export type Atendimento = {
   nome: string;
   finalizado: boolean;
   uid: string;
+  organizationId: number;
   balcao: string;
 }
 

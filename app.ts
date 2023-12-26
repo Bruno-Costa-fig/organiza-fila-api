@@ -83,19 +83,6 @@ app.post("/api/novo-balcao", authenticateToken, (req, res) => {
   res.send(numero);
 });
 
-app.post("/api/cliente-teste", authenticateToken, async (req, res) => {
-  const cliente = {
-    nome: req.body.nome,
-    createdAt: admin.firestore.Timestamp.fromDate(new Date()),
-    updatedAt: admin.firestore.Timestamp.fromDate(new Date()),
-    finalizado: false,
-    prioridade: req.body.prioridade,
-    balcao: "",
-  };
-
-  res.send(cliente);
-});
-
 app.post("/api/cliente", authenticateToken, async (req, res) => {
   const cliente = {
     nome: req.body.nome,
@@ -103,6 +90,7 @@ app.post("/api/cliente", authenticateToken, async (req, res) => {
     updatedAt: admin.firestore.Timestamp.fromDate(new Date()),
     finalizado: false,
     prioridade: req.body.prioridade,
+    organizationId: req.body.organizationId,
     balcao: "",
     uid: ""
   };
