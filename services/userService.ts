@@ -140,8 +140,26 @@ const deleteUser = async (user: IUser) => {
   };
 };
 
-// User.sync({force: true})
-//   .then(() => console.log('User table created successfully'))
-//   .catch(error => console.error('Error creating User table:', error));
+function sync(){
+  User.sync({ force: true })
+    .then(() => {
+        console.log("User table created successfully");
+        User.create({
+            username: "Admin Iguatec",
+            password: process.env.SENHA_ADMIN,
+            valid: true,
+      email: process.env.EMAIL_ADMIN,
+      uid: uuidv4(),
+      organizationId: 1,
+      createdAt: new Date(),
+      numero: "",
+      id: 1,
+      role: "sysadmin",
+    });
+  })
+  .catch((error) => console.error("Error creating User table:", error));
+}
+
+// sync();
 
 export { getAllUsers, getUserById, insertUser, updateUser, deleteUser };

@@ -2,6 +2,11 @@ import { DataTypes } from "sequelize";
 import { sequelize as db } from "../db";
 
 const Organization = db.define('Organization', {
+  id: {
+    type: DataTypes.INTEGER,
+    autoIncrement: true,
+    primaryKey: true
+  },
   name: DataTypes.STRING,
   cnpj: DataTypes.STRING,
   adminEmail: DataTypes.STRING,
@@ -11,6 +16,8 @@ const Organization = db.define('Organization', {
   primaryColor: DataTypes.STRING,
   secondaryColor: DataTypes.STRING,
   limiteBalcoes: DataTypes.INTEGER,
+  limitePaineis: DataTypes.INTEGER,
+  limiteUsuarios: DataTypes.INTEGER,
   valid: DataTypes.BOOLEAN,
   uid: DataTypes.STRING,
   createdAt: DataTypes.DATE,
