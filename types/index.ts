@@ -22,6 +22,7 @@ export type Balcao = {
 export type Cliente = {
   nome: string;
   prioridade: boolean;
+  organizationId: number;
 }
 
 export type BalcaoToken = {
