@@ -1,9 +1,7 @@
 import express, { Request, Response, NextFunction } from "express";
 import jwt from 'jsonwebtoken';
 import * as admin from "firebase-admin";
-// var admin = require("firebase-admin");
 import cors from "cors";
-// const cors = require("cors");
 import {
   getFila,
   getProximo,
@@ -16,21 +14,13 @@ import {
 import * as OrganizationController from "./controllers/organizationController";
 import * as UserController from "./controllers/userController";
 
-// require("dotenv").config();
 import dotenv from "dotenv";
 dotenv.config()
-import { Atendimento, NewUserDTO } from "./types";
-import { LoginUser } from "./services/auth";
-import { insertUser } from "./services/userService";
-import IUser from "./types/IUser";
+import { Atendimento } from "./types";
+import { LoginUser, getUserInfo } from "./services/auth";
 
 const app = express();
 const port = process.env.PORT;
-
-const balcoes: string[] = [];
-
-// app.use(cors());
-// const allowedOrigins = ['http://localhost:3000', 'filaja.iguatec.com.br'];
 
 const options: cors.CorsOptions = {
   origin: "*"
@@ -60,12 +50,13 @@ function authenticateToken(req: Request, res: Response, next: NextFunction) {
 
 app.get("/api/fila", authenticateToken, async (req, res) => {
   let token = req.headers.authorization;
+  token = token?.replace("Bearer ", "");
 
   // @ts-ignore
   let info = getUserInfo(token);
   let userLogado = JSON.parse(info?.result || "{}");
 
-  const result = await getFila(userLogado.organizationId);
+  const result = await getFila(userLogado.tokenUser.organizationId);
 
   if (!!result.dados) {
     res.send(result.dados);
@@ -104,13 +95,14 @@ app.get("/api/atual/:balcao", authenticateToken, async (req, res) => {
   let balcaoParams = req.params.balcao;
 
   let token = req.headers.authorization;
+  token = token?.replace("Bearer ", "");
 
   // @ts-ignore
   let info = getUserInfo(token);
   let userLogado = JSON.parse(info?.result || "{}");
 
   try {
-    let atual = await getAtual(balcaoParams, userLogado.organizationId);
+    let atual = await getAtual(balcaoParams, userLogado.tokenUser.organizationId);
 
     res.send(atual);
     res.end();
@@ -125,13 +117,14 @@ app.get("/api/novamente/:balcao", authenticateToken, async (req, res) => {
   let balcaoParams: string = req.params.balcao;
 
   let token = req.headers.authorization;
+  token = token?.replace("Bearer ", "");
 
   // @ts-ignore
   let info = getUserInfo(token);
   let userLogado = JSON.parse(info?.result || "{}");
 
   try {
-    let atual = await getAtual(balcaoParams, userLogado.organizationId);
+    let atual = await getAtual(balcaoParams, userLogado.tokenUser.organizationId);
     let cliente: Atendimento = atual.dados;
     if(!!cliente){
       // @ts-ignore
@@ -172,6 +165,7 @@ app.post("/api/proximo/:balcao/:uid", authenticateToken, async (req, res) => {
   let error: string | null = null;
 
   let token = req.headers.authorization;
+  token = token?.replace("Bearer ", "");
 
   // @ts-ignore
   let info = getUserInfo(token);
@@ -186,7 +180,7 @@ app.post("/api/proximo/:balcao/:uid", authenticateToken, async (req, res) => {
       await deleteCliente(uidParams, cliente);
     }
 
-    let getProx = await getProximo(userLogado.organizationId);
+    let getProx = await getProximo(userLogado.tokenUser.organizationId);
 
     if (getProx.error == null && !!getProx.dados) {
       let proximo: Atendimento = getProx.dados;
