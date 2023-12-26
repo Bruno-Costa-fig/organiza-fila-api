@@ -107,7 +107,7 @@ function sync() {
         id: 1,
         name: "Iguatec",
         cnpj: "46067411000103",
-        adminEmail: "admin@iguatec.com.br",
+        adminEmail: process.env.EMAIL_ADMIN,
         limiteBalcoes: "10000",
         limitePaineis: "10000",
         limiteUsuarios: "10000",
