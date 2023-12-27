@@ -53,7 +53,6 @@ export type NewUserDTO = {
 }
 
 export type TokenUser = {
-  email: string;
   username: string;
   organizationId: number; 
   numero: string;

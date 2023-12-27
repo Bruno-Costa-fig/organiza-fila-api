@@ -32,7 +32,6 @@ async function LoginUser(userDto: UserLoginDTO) {
       error = "Senha incorreta!";
     } else {
       const tokenUser: TokenUser = {
-        email: user.email,
         username: user.username,
         organizationId: user.organizationId,
         numero: user.numero,
