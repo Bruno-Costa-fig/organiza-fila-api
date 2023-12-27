@@ -194,6 +194,11 @@ app.post("/api/proximo/:balcao/:uid", authenticateToken, async (req, res) => {
 
     let getProx = await getProximo(userLogado.tokenUser.organizationId, prioridade);
 
+    if(getProx.error == null && getProx.dados == null){
+      prioridade = !prioridade;
+      getProx = await getProximo(userLogado.tokenUser.organizationId, prioridade);
+    }
+
     if (getProx.error == null && !!getProx.dados) {
       let proximo: Atendimento = getProx.dados;
       proximo.balcao = balcaoParams;
