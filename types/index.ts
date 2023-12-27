@@ -41,6 +41,8 @@ export type UserGet = {
   organizationId: number; 
   numero: string;
   role: string;
+  valid: boolean;
+  id?: number;
 }
 
 export type NewUserDTO = {

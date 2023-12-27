@@ -24,6 +24,8 @@ const getAllUsers = async (role: string = "") => {
             organizationId: x.organizationId,
             numero: x.numero,
             role: x.role,
+            id: x.id,
+            valid: x.valid
           });
         }
       } else {
@@ -33,6 +35,8 @@ const getAllUsers = async (role: string = "") => {
           organizationId: x.organizationId,
           numero: x.numero,
           role: x.role,
+          id: x.id,
+          valid: x.valid
         });
       }
     });
@@ -139,6 +143,7 @@ const insertUser = async (user: IUser) => {
       organizationId: dados.organizationId,
       role: dados.role,
       username: dados.username,
+      valid: dados.valid,
     };
   } catch (error) {
     console.error("Error create user:", error);
