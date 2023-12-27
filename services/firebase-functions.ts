@@ -23,7 +23,7 @@ admin.initializeApp({
 });
 
 function compararPorUpdatedAt(a: Atendimento, b: Atendimento) {
-  return b.updatedAt._seconds - a.updatedAt._seconds;
+  return a.updatedAt._seconds - b.updatedAt._seconds;
 }
 
 async function getFila(organizationId: number) {
