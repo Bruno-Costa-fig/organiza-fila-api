@@ -18,6 +18,7 @@ import dotenv from "dotenv";
 dotenv.config()
 import { Atendimento } from "./types";
 import { LoginUser, getUserInfo } from "./services/auth";
+import { getBalcaoLogsById, getBalcaoLogsByIdLast, inserBalcaoLogs } from "./services/balcaoLogsService";
 
 const app = express();
 const port = process.env.PORT;
@@ -157,6 +158,15 @@ app.put("/api/finalizar/:uid", authenticateToken, async (req, res) => {
   }
 });
 
+/**
+ * POST /api/proximo/:balcao/:uid
+ * 
+ * Calcula o próximo cliente a ser atendido.
+ * 
+ * @param balcao - Número do balcão que solicitou o próximo cliente.
+ * @param uid - Uid do cliente atual que ele está atendendo para ser finalizado.
+ * @returns O próximo cliente a ser atendido.
+ */
 app.post("/api/proximo/:balcao/:uid", authenticateToken, async (req, res) => {
   let uidParams: string = req.params.uid;
   let balcaoParams: string = req.params.balcao;
@@ -179,7 +189,10 @@ app.post("/api/proximo/:balcao/:uid", authenticateToken, async (req, res) => {
       await deleteCliente(uidParams, cliente);
     }
 
-    let getProx = await getProximo(userLogado.tokenUser.organizationId);
+    let getLog = await getBalcaoLogsByIdLast(userLogado.tokenUser.organizationId, balcaoParams);
+    let prioridade = !getLog.data?.prioridade ?? false;
+
+    let getProx = await getProximo(userLogado.tokenUser.organizationId, prioridade);
 
     if (getProx.error == null && !!getProx.dados) {
       let proximo: Atendimento = getProx.dados;
@@ -188,6 +201,16 @@ app.post("/api/proximo/:balcao/:uid", authenticateToken, async (req, res) => {
       proximo.updatedAt = admin.firestore.Timestamp.fromDate(new Date()); 
       await updateCliente(proximo.uid, proximo);
       clienteRes = proximo;
+
+      await inserBalcaoLogs(userLogado.tokenUser.organizationId, {
+        atendimentoId: proximo.uid,
+        balcaoId: Number(balcaoParams),
+        code: "",
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        prioridade: prioridade,
+      });
+
     } else {
       error = getProx.error ?? "Não há clientes na fila!";
     }

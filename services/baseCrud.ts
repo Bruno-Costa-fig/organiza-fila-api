@@ -13,6 +13,11 @@ async function getWhere<T extends Model>(model: ModelStatic<T>, atrinute: string
   return model.findOne({ where: { [atrinute]: value } });
 }
 
+async function getLast<T extends Model>(model: ModelStatic<T>, atrinute: string, value: string | number) {
+  // @ts-ignore
+  return model.findOne({ where: { [atrinute]: value }, order: [['id', 'DESC']] });
+}
+
 async function create<T extends Model>(model: ModelStatic<T>, data: Partial<T['_attributes']>) {
   // @ts-ignore
   return model.create(data);
@@ -32,6 +37,7 @@ export {
   getAll,
   getById,
   getWhere,
+  getLast,
   create,
   update,
   remove,

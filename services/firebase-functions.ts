@@ -77,7 +77,7 @@ async function emAtendimento(organizationId: number) {
   return { dados, error };
 }
 
-async function getProximo(organizationId: number) {
+async function getProximo(organizationId: number, prioridade: boolean = false) {
   let dados = {} as Atendimento;
   let error: string | null = null;
 
@@ -85,6 +85,7 @@ async function getProximo(organizationId: number) {
     .firestore()
     .collection("fila")
     .where("finalizado", "==", false)
+    .where("prioridade", "==", prioridade)
     .where("balcao", "==", "")
     .where("organizationId", "==", organizationId)
     .get();
