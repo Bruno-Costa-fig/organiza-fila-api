@@ -159,6 +159,19 @@ const insertUser = async (user: IUser) => {
 const updateUser = async (user: IUser) => {
   let data = {} as IUser;
   let error = null;
+
+  let atual = await getUserById(user.id);
+
+  if (!atual) {
+    error = "Usuário não encontrado!";
+    return {
+      data,
+      error,
+    };
+  }
+
+  user.password = atual.data.password;
+
   try {
     // @ts-ignore
     data = await update(User, user.id, user);
