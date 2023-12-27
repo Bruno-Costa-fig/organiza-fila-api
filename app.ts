@@ -175,7 +175,6 @@ app.post("/api/proximo/:balcao/:uid", authenticateToken, async (req, res) => {
     if (uidParams != '0') {
       const cliente = req.body;
       cliente.finalizado = true;
-      cliente.updatedAt = admin.firestore.Timestamp.fromDate(new Date()); 
 
       await deleteCliente(uidParams, cliente);
     }
@@ -185,6 +184,8 @@ app.post("/api/proximo/:balcao/:uid", authenticateToken, async (req, res) => {
     if (getProx.error == null && !!getProx.dados) {
       let proximo: Atendimento = getProx.dados;
       proximo.balcao = balcaoParams;
+      // @ts-ignore
+      proximo.updatedAt = admin.firestore.Timestamp.fromDate(new Date()); 
       await updateCliente(proximo.uid, proximo);
       clienteRes = proximo;
     } else {
