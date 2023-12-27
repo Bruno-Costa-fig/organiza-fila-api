@@ -74,6 +74,8 @@ export type IOrganization = {
   primaryColor: string;
   secondaryColor: string;
   limiteBalcoes: number;
+  limitePaineis: number;
+  limiteUsuarios: number;
   valid: boolean;
   uid: string;
   createdAt: Date;

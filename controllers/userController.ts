@@ -1,5 +1,5 @@
 import { getUserInfo } from "../services/auth";
-import { deleteUser, getUserById, getAllUsers, insertUser, updateUser } from "../services/userService";
+import { deleteUser, getUserById, getAllUsers, insertUser, updateUser, canAddUser } from "../services/userService";
 import IUser from "../types/IUser";
 import { Request, Response } from "express";
 
@@ -21,7 +21,7 @@ const getById = (req: Request, res: Response) => {
   });
 };
 
-const post = (req: Request, res: Response) => {
+const post = async (req: Request, res: Response) => {
   let token = req.headers.authorization;
 
   // @ts-ignore
@@ -31,6 +31,13 @@ const post = (req: Request, res: Response) => {
   let user = req.body as IUser;
   user.valid = true;
   user.organizationId != 0 ? user.organizationId : userLogado?.organizationId ?? 0;
+
+  let candd = await canAddUser(user.role, user.organizationId);
+
+  if(!candd.data){
+    res.status(400).json('O limite de usuários foi atingido!');
+    return;
+  }
 
   insertUser(user).then((result) => {
     res.status(200).json(result);

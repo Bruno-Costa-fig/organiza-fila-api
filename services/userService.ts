@@ -1,6 +1,7 @@
 import User from "../model/User";
-import { UserGet } from "../types";
+import { IOrganization, UserGet } from "../types";
 import IUser from "../types/IUser";
+import Organization from "../model/Organization";
 // @ts-ignore
 import bcrypt from "bcrypt";
 import dotenv from "dotenv";
@@ -35,6 +36,50 @@ const getAllUsers = async (role: string = "") => {
         });
       }
     });
+  } catch (error) {
+    console.error("Error getting all users:", error);
+    error = error;
+  }
+
+  return {
+    data,
+    error,
+  };
+};
+
+const canAddUser = async (role: string, organizationId: number) => {
+  let data = false;
+  let error = null;
+  try {
+    // @ts-ignore
+    const organization: IOrganization = await getById(
+      Organization,
+      organizationId
+    );
+    const users = await getAll(User);
+    let allUsers = users.map((user: any) => user.toJSON()) as IUser[];
+    let count = 0;
+    allUsers.map((x) => {
+      if (x.role.includes(role)) {
+        count++;
+      }
+    });
+
+    switch (role) {
+      case "balcao":
+        if (count < organization.limiteBalcoes) {
+          data = true;
+        }
+        break;
+      case "painel":
+          if (count < organization.limitePaineis) {
+            data = true;
+          }
+          break;
+      default: 
+        data = true;
+        break;
+    }
   } catch (error) {
     console.error("Error getting all users:", error);
     error = error;
@@ -167,4 +212,4 @@ function sync() {
 
 // sync();
 
-export { getAllUsers, getUserById, insertUser, updateUser, deleteUser };
+export { getAllUsers, canAddUser, getUserById, insertUser, updateUser, deleteUser };
