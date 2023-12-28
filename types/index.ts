@@ -7,6 +7,7 @@ export type Atendimento = {
   uid: string;
   organizationId: number;
   balcao: string;
+  code: string;
 }
 
 export type Timestamp = {
@@ -23,6 +24,7 @@ export type Cliente = {
   nome: string;
   prioridade: boolean;
   organizationId: number;
+  code: string;
 }
 
 export type BalcaoToken = {

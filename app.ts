@@ -9,6 +9,7 @@ import {
   updateCliente,
   getAtual,
   deleteCliente,
+  hasCode,
 } from "./services/firebase-functions";
 
 import * as OrganizationController from "./controllers/organizationController";
@@ -77,8 +78,19 @@ app.post("/api/cliente", authenticateToken, async (req, res) => {
     prioridade: req.body.prioridade,
     organizationId: req.body.organizationId,
     balcao: "",
-    uid: ""
+    uid: "",
+    code: req.body.code,
   };
+
+  if(!!cliente.code){
+    let alreadyExists = await hasCode(cliente.code, cliente.organizationId);
+
+    if(!!alreadyExists.dados){
+      res.status(400).send("Já existe um cliente com esse código!");
+      res.end();
+      return;
+    }
+  }
 
   // @ts-ignore
   const result = await novoCliente(cliente);
@@ -210,10 +222,10 @@ app.post("/api/proximo/:balcao/:uid", authenticateToken, async (req, res) => {
       await inserBalcaoLogs(userLogado.tokenUser.organizationId, {
         atendimentoId: proximo.uid,
         balcaoId: Number(balcaoParams),
-        code: "",
         createdAt: new Date(),
         updatedAt: new Date(),
         prioridade: prioridade,
+        code: proximo.code ?? "",
       });
 
     } else {

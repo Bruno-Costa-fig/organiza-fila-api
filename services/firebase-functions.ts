@@ -167,6 +167,38 @@ async function updateCliente(uid: string, cliente: Atendimento) {
   }
 }
 
+async function hasCode(code: string, organizationId: number) {
+  let dados: Atendimento = {} as Atendimento;
+  let error: string | null = null;
+
+  if (!code) {
+    error = "É necessário informar o código";
+    return { dados, error };
+  }
+
+  const result = await admin
+    .firestore()
+    .collection("fila")
+    .where("code", "==", code)
+    .where("organizationId", "==", organizationId)
+    .limit(1)
+    .get();
+
+  if (!!result) {
+    let sortedArray = result.docs
+      .map((doc) => ({ ...doc.data(), uid: doc.id }))
+      // @ts-ignore
+      
+      .sort(compararPorUpdatedAt);
+      // @ts-ignore
+    dados = sortedArray[0];
+  } else {
+    error = "Erro ao buscar os dados!";
+  }
+
+  return { dados, error };
+}
+
 async function deleteCliente(uid: string, cliente: Atendimento) {
   if (!cliente || !uid) {
     return null;
@@ -308,6 +340,7 @@ export {
   emAtendimento,
   getProximo,
   deleteCliente,
+  hasCode,
 
   base_insert,
   base_get_all,
