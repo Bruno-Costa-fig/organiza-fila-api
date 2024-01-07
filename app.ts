@@ -62,11 +62,11 @@ function authenticateToken(req: Request, res: Response, next: NextFunction) {
   // @ts-ignore
   jwt.verify(token, process.env.SECRET, (err: any, user: any) => {
     if (err) {
-      return res.sendStatus(403).send("Faça o login novamente!"); // Se o token for inválido, retorne um erro 403 (proibido)
+      return res.sendStatus(401); // Se o token for inválido, retorne um erro 401 (não autorizado)
     }
-
+    
     if(isTokenExpired(token)){
-      return res.sendStatus(401).send("Faça o login novamente!"); // Se não houver token, retorne um erro 401 (não autorizado)
+      return res.sendStatus(401); // Se não houver token, retorne um erro 401 (não autorizado)
     }
 
     next(); // Continue para a próxima função middleware ou rota
@@ -261,7 +261,6 @@ app.post("/api/proximo/:balcao/:uid", authenticateToken, async (req, res) => {
     res.end();
   }
 });
-
 
 // organizations
 app.get("/api/organizations", authenticateToken, OrganizationController.GetAllOrganization);
