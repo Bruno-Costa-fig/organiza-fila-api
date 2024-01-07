@@ -31,6 +31,25 @@ const options: cors.CorsOptions = {
 app.use(cors(options));
 app.use(express.json());
 
+function isTokenExpired(token: string): boolean {
+  try {
+    const decoded: any = jwt.decode(token);
+    const current_time = Date.now().valueOf() / 1000;
+
+    if (decoded.exp < current_time) {
+      // Token is expired
+      return true;
+    } else {
+      // Token is not expired
+      return false;
+    }
+  } catch (err) {
+    // Error occurred while decoding
+    console.error(err);
+    return true;
+  }
+}
+
 function authenticateToken(req: Request, res: Response, next: NextFunction) {
   // Obtenha o token do header 'Authorization'
   const authHeader = req.headers['authorization'];
@@ -43,7 +62,11 @@ function authenticateToken(req: Request, res: Response, next: NextFunction) {
   // @ts-ignore
   jwt.verify(token, process.env.SECRET, (err: any, user: any) => {
     if (err) {
-      return res.sendStatus(403); // Se o token for inválido, retorne um erro 403 (proibido)
+      return res.sendStatus(403).send("Faça o login novamente!"); // Se o token for inválido, retorne um erro 403 (proibido)
+    }
+
+    if(isTokenExpired(token)){
+      return res.sendStatus(401).send("Faça o login novamente!"); // Se não houver token, retorne um erro 401 (não autorizado)
     }
 
     next(); // Continue para a próxima função middleware ou rota
@@ -281,6 +304,10 @@ app.post('/api/login', async (req: Request, res: Response) => {
       message: error.message,
     });
   }
+});
+
+app.get("/api/isAuthenticated", authenticateToken, async (req, res) => {
+  res.status(200).send("OK");
 });
 
 app.listen(port, () =>

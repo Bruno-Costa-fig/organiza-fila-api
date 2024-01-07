@@ -99,7 +99,7 @@ const DeleteOrganization = async (organization: IOrganization) => {
   };
 };
 
-function sync() {
+function syncForce() {
   Organization.sync({ force: true })
     .then(() => {
       console.log("Organization table created successfully");
@@ -116,6 +116,16 @@ function sync() {
         createdAt: new Date(),
         updatedAt: new Date(),
       });
+    })
+    .catch((error) =>
+      console.error("Error creating organization table:", error)
+    );
+}
+
+function sync() {
+  Organization.sync({ alter: true })
+    .then(() => {
+      console.log("Organization table updated successfully");
     })
     .catch((error) =>
       console.error("Error creating organization table:", error)

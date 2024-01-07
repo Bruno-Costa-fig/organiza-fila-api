@@ -22,6 +22,8 @@ const Organization = db.define('Organization', {
   uid: DataTypes.STRING,
   createdAt: DataTypes.DATE,
   updatedAt: DataTypes.DATE,
+  processType: DataTypes.STRING,
+  hasManualCode: DataTypes.BOOLEAN,
 });
 
 export default Organization;

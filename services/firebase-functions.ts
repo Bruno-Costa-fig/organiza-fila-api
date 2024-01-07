@@ -32,7 +32,7 @@ async function getFila(organizationId: number) {
 
   const result = await admin
     .firestore()
-    .collection("fila")
+    .collection(process.env.FIREBASE_DOC_NAME ?? 'fila-dev')
     .where("finalizado", "==", false)
     .where("balcao", "==", "")
     .where("organizationId", "==", organizationId)
@@ -58,7 +58,7 @@ async function emAtendimento(organizationId: number) {
 
   const result = await admin
     .firestore()
-    .collection("fila")
+    .collection(process.env.FIREBASE_DOC_NAME ?? 'fila-dev')
     .where("finalizado", "==", false)
     .where("balcao", "!=", "")
     .where("organizationId", "==", organizationId)
@@ -83,7 +83,7 @@ async function getProximo(organizationId: number, prioridade: boolean = false) {
 
   const result = await admin
     .firestore()
-    .collection("fila")
+    .collection(process.env.FIREBASE_DOC_NAME ?? 'fila-dev')
     .where("finalizado", "==", false)
     .where("prioridade", "==", prioridade)
     .where("balcao", "==", "")
@@ -116,7 +116,7 @@ async function getAtual(balcao: string, organizationId: number) {
 
   const result = await admin
     .firestore()
-    .collection("fila")
+    .collection(process.env.FIREBASE_DOC_NAME ?? 'fila-dev')
     .where("finalizado", "==", false)
     .where("balcao", "==", balcao)
     .where("organizationId", "==", organizationId)
@@ -144,7 +144,7 @@ async function novoCliente(cliente: Atendimento) {
   }
 
   try {
-    await admin.firestore().collection("fila").add(cliente);
+    await admin.firestore().collection(process.env.FIREBASE_DOC_NAME ?? 'fila-dev').add(cliente);
 
     return "Adicionado a fila com sucesso!";
   } catch (erro) {
@@ -158,7 +158,7 @@ async function updateCliente(uid: string, cliente: Atendimento) {
   }
 
   try {
-    const ref = admin.firestore().collection("fila").doc(uid);
+    const ref = admin.firestore().collection(process.env.FIREBASE_DOC_NAME ?? 'fila-dev').doc(uid);
 
     await ref.set(cliente);
     return "Atualizado com sucesso!";
@@ -178,7 +178,7 @@ async function hasCode(code: string, organizationId: number) {
 
   const result = await admin
     .firestore()
-    .collection("fila")
+    .collection(process.env.FIREBASE_DOC_NAME ?? 'fila-dev')
     .where("code", "==", code)
     .where("organizationId", "==", organizationId)
     .limit(1)
@@ -205,7 +205,7 @@ async function deleteCliente(uid: string, cliente: Atendimento) {
   }
 
   try {
-    const ref = admin.firestore().collection("fila").doc(uid);
+    const ref = admin.firestore().collection(process.env.FIREBASE_DOC_NAME ?? 'fila-dev').doc(uid);
 
     await ref.delete();
     return "Removido com sucesso!";

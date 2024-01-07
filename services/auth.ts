@@ -10,6 +10,7 @@ import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
 dotenv.config();
 import { getWhere } from "./baseCrud";
+import { GetOrganizationById } from "./organizationService";
 
 async function LoginUser(userDto: UserLoginDTO) {
   let result: string | null = null;
@@ -31,11 +32,27 @@ async function LoginUser(userDto: UserLoginDTO) {
       if (!valid) {
         error = "Senha incorreta!";
       } else {
+        const organizationResult = await GetOrganizationById(user.organizationId);
+
+        if (!organizationResult || !!organizationResult.error) {
+          error = "Organização não encontrada!";
+          return { result, error };
+        }
+
+        const organization = organizationResult.data;
+
         const tokenUser: TokenUser = {
           username: user.username,
           organizationId: user.organizationId,
           numero: user.numero,
-          role: user.role
+          role: user.role,
+          hasManualCode: organization.hasManualCode,
+          processType: organization.processType,
+          primaryColor: organization.primaryColor,
+          secondaryColor: organization.secondaryColor,
+          thirdLogoUrl: organization.thirdLogoUrl,
+          secondLogoUrl: organization.secondLogoUrl,
+          logoUrl: organization.logoUrl,
         };
         
         // @ts-ignore
