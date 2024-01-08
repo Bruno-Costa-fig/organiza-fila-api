@@ -94,10 +94,10 @@ async function getProximo(organizationId: number, prioridade: boolean = false) {
     let sortedArray = result.docs
       .map((doc) => ({ ...doc.data(), uid: doc.id }))
       // @ts-ignore
-      .sort(compararPorUpdatedAt);
+      .sort((a, b) => Number(a.code.replace(/\D/g, '')) - Number(b.code.replace(/\D/g, '')))
     
-      // @ts-ignore
-      dados = sortedArray[0];
+    // @ts-ignore
+    dados = sortedArray[0];
   } else {
     error = "Erro ao buscar os dados!";
   }
